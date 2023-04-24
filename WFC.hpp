@@ -36,7 +36,7 @@ public:
 
         for (t_tile i:tilePoss_a) {
             for (t_tile e:tilePoss_b) {
-                
+                //ACA FALTA PROGRAMAR
             }
         }
 
