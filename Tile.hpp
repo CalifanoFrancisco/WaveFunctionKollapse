@@ -7,6 +7,8 @@
 #include "t_tile.hpp"
 #include <time.h>
 
+#define COLLAPSED_TILE_SIZE 1
+
 using std::vector;
 
 class Tile {
@@ -36,23 +38,38 @@ public:
         srand(time(NULL));
     }
 
+    Tile(vector<t_tile> tilePos):
+        ref(t_tile::NONE), m_tilePossibilities(tilePos)
+    { }
+
     int entropy() {
-        return m_tilePossibilities.size();
+        return this->m_tilePossibilities.size();
     }
 
     void collapse() {
         int num   = rand() % m_tilePossibilities.size();
         this->ref = m_tilePossibilities[num];
-        m_tilePossibilities.clear();
+        m_tilePossibilities.clear();                        // thus entropy = 0
+        m_tilePossibilities.push_back(ref);                 // entropy = 1 when collapsed
+    }
+
+    Tile& operator=(const Tile& tile) {
+        if (this != &tile) {
+            ref = tile.ref;
+            m_tilePossibilities = tile.m_tilePossibilities;
+        }
+        return *this;
     }
 
 };
 
-std::ostream &operator<<(std::ostream &os, Tile const& tile) {
-    //os << "> Pos X:" << tile.x << " Y:" << tile.y << " | ";
+std::ostream &operator<<(std::ostream &os, const Tile& tile) {    
     os << "Possibilities: ";
-    for (int i = 0; i < t_tile::NONE + 1; i++) 
-        os << to_string(i) << " ";
+    if (tile.m_tilePossibilities.size() == COLLAPSED_TILE_SIZE) 
+        return os << to_string(tile.ref);
+
+    for (int i = 0; i < tile.m_tilePossibilities.size(); i++) 
+        os << to_string(tile.m_tilePossibilities[i]) << " ";
     return os;
 }
 

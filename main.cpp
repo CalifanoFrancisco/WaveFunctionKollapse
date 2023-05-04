@@ -5,24 +5,35 @@
 #include "Map.hpp"
 #include "WFC.hpp"
 
-
 using std::cout;
 using std::string;
 using std::endl;
 
-int main() {
-    Map map(80, 10);
+using std::vector;
+
+void collapseAtRandom(Map &map) {
     for (int y = 0; y < map.size().y; y++) {
         for (int x = 0; x < map.size().x; x++) {
             map.m_map[y * map.size().x + x].collapse();
         }
     }
-    map.draw();
+}
 
-    WFC wfc(4, 4);
+template <typename T> 
+std::ostream &operator<<(std::ostream &os, vector<T> const& list) {
+    for (T i:list) {
+        os << i << " ";
+    }
+    return os;
+}
+
+int main() {
+
+    WFC wfc(1, 2);
     wfc.run();
-
 
     //cout << "Exit success" << endl;
     return 0;
 }
+
+

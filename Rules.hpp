@@ -1,7 +1,9 @@
 #ifndef RULES_H
 #define RULES_H
 
+#include <stdexcept>
 #include <iostream>
+
 #include "t_tile.hpp"
 
 #define DEBUG 1
@@ -22,7 +24,7 @@ public:
 
 class Rules {
 private:
-    const Rule rules[12] = {
+    const Rule m_rules[12] = {
         Rule(t_tile::DOWN_RIGHT,      0, 1, 0, 1),
         Rule(t_tile::DOWN_UP,         1, 1, 0, 0),
         Rule(t_tile::DOWN_LEFT,       0, 1, 1, 0),
@@ -39,9 +41,16 @@ private:
     const int m_size = 12;
 
 public:
-    int size() { return m_size; }
+    const int size() { return m_size; }
     const Rule& operator[](int index) {
-        return rules[index];
+        return m_rules[index];
+    }
+
+    Rule getByT_tile(const t_tile x) {
+        for (Rule i: m_rules) {
+            if (i.tileType == x) return i;
+        }
+        throw std::invalid_argument("Element with no Rule::Rule() defined or not loaded into Rules::m_rules");
     }
 };
 
