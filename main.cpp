@@ -27,6 +27,13 @@ std::ostream &operator<<(std::ostream &os, vector<T> const& list) {
     return os;
 }
 
+//FUNCIONA EN WFC(1,2)
+/*
+Se queda encerrado en algun loop, fijarse cual y arreglarlo
+el resto ya esta
+se puede cali <3
+*/
+
 int main() {
 
     WFC wfc(1, 2);
