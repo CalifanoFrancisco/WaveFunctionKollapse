@@ -6,13 +6,6 @@
 
 #include "t_tile.hpp"
 
-#define DEBUG 1
-#if DEBUG
-    #define println(x) std::cout << x << std::endl
-#else
-    #define println(x)
-#endif
-
 class Rule {
 public:
     t_tile tileType;

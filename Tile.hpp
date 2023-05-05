@@ -10,6 +10,8 @@
 #define COLLAPSED_TILE_SIZE 1
 
 using std::vector;
+using std::cout;
+using std::endl;
 
 class Tile {
 private:
@@ -47,10 +49,19 @@ public:
     }
 
     void collapse() {
+        /*
+        cout << "From ";
+        for(t_tile i: m_tilePossibilities) 
+            std::cout << i << " ";
+        cout << "(" << m_tilePossibilities.size() << ") states to ";
+        */
+
         int num   = rand() % m_tilePossibilities.size();
         this->ref = m_tilePossibilities[num];
-        m_tilePossibilities.clear();                        // thus entropy = 0
-        m_tilePossibilities.push_back(ref);                 // entropy = 1 when collapsed
+        m_tilePossibilities.clear();                        // set entropy = 0
+        m_tilePossibilities.push_back(this->ref);           // entropy = 1 when collapsed
+
+        //cout << m_tilePossibilities[0] << "(" << m_tilePossibilities.size() << ")" << endl;
     }
 
     Tile& operator=(const Tile& tile) {
