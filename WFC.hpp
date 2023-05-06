@@ -54,7 +54,12 @@ public:
 
     // clockwise <@>   UP: 0 | RIGHT: 1 | DOWN: 2 | LEFT: 3
     void calculate(const int index, const int displacement, const int side) {
-
+        
+        // experimental optimization, not tested yet
+        int MAX_TILE_POSSIBILITIES = 12;    //enum t_tile size
+        if (a_map[index].m_tilePossibilities == MAX_TILE_POSSIBILITIES) return;
+        // ;
+        
         const Tile tile_a = m_map[index];
         const Tile tile_b = m_map[displacement];
 
