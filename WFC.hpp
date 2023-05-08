@@ -4,9 +4,8 @@
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
 #include <vector>
-#include <time.h>
+#include <time.h>       // for srand()
 
 #include "Vector2u.hpp"
 #include "Rules.hpp"
@@ -14,7 +13,6 @@
 #include "Map.hpp"
 
 using std::vector;
-
 using std::cout;
 using std::endl;
 
@@ -23,6 +21,7 @@ private:
     vector<Tile> m_map;
     Vector2u     m_size;
     Rules        m_rules;
+    unsigned int m_seed;
 
     template <typename T>
     void setCroto(vector<T> &list, const T& element) {
@@ -30,13 +29,6 @@ private:
             if (i == element) return;
         
         list.push_back(element);
-    }
-
-public:
-    WFC(const unsigned int x, const unsigned int y) {
-        m_map.resize(x * y);
-        m_size = Vector2u(x, y);
-        srand(time(NULL));
     }
 
     // if tile is collapsed returns true
@@ -54,12 +46,7 @@ public:
 
     // clockwise <@>   UP: 0 | RIGHT: 1 | DOWN: 2 | LEFT: 3
     void calculate(const int index, const int displacement, const int side) {
-        
-        // experimental optimization, not tested yet
-        int MAX_TILE_POSSIBILITIES = 12;    //enum t_tile size
-        if (a_map[index].m_tilePossibilities == MAX_TILE_POSSIBILITIES) return;
-        // ;
-        
+
         const Tile tile_a = m_map[index];
         const Tile tile_b = m_map[displacement];
 
@@ -97,21 +84,18 @@ public:
         m_map[displacement].m_tilePossibilities = aux_b_tiles;
     }
     
-    // Spreads tile info throught map | descomenta las otras funciones
+    // Spreads tile info throught map
     void propagate() {
         
         for (int i = 0; i < m_map.size(); i++) {                    // iterate through map
 
-            //if (i < 10) std::cout << " " << i; else std::cout << i;
-            //std::cout << " | " << m_map[i] << " -> ";
+            if (m_map[i].entropy() == 12) continue;
 
             if (int(i - m_size.x) > 0           ) calculate(i, i - m_size.x, 0);     // calculate up    tile if possible
             if (i + 1             < m_map.size()) calculate(i, i + 1,        1);     // calculate right tile if possible
             if (i + m_size.x      < m_map.size()) calculate(i, i + m_size.x, 2);     // calculate down  tile if possible
             if (int(i - 1)        > 0           ) calculate(i, i - 1,        3);     // calculate left  tile if possible
             
-            //std::cout << " " << m_map[i] << "\n";
-
         }
     }
 
@@ -154,31 +138,56 @@ public:
         }
         return -1;
     }
-    
+
+public:
+    WFC(const unsigned int x, const unsigned int y, const unsigned int seed) {
+        this->m_size = Vector2u(x, y);
+        this->m_seed = seed;
+        this->m_map.resize(x * y);
+        srand(m_seed);
+
+        for (int i = 0; i < m_map.size(); i++)
+            this->m_map[i] = Tile(seed);
+
+    }
+    WFC(const unsigned int x, const unsigned int y) {
+        this->m_size = Vector2u(x, y);
+        this->m_map.resize(x * y);
+        this->m_seed = time(NULL);
+        srand(m_seed);
+
+        for (int i = 0; i < m_map.size(); i++)
+            this->m_map[i] = Tile(m_seed);            
+    }
+
     // run Wave Function Collapse algorythm
-    void run() {
+    void run(const bool render) {
+
         // collapse random tile to init chain collapses
-        int n = rand() % m_map.size();
-        //n = 0;
-        m_map[n].collapse();
+        //m_map[rand() % m_map.size()].collapse();
+        m_map[0].collapse();
+        //m_map[(m_size.y * m_size.x) - 1].collapse();
+
+        // iteration percentage
+        int percentage = 0, temp;
 
         // while map isnt fully collapsed
-        for (int i=0; !hasEntirelyCollapsed(); i++) {
+        for (int i = 0; !hasEntirelyCollapsed(); i++) {
             
             //render WFC progress
-            cout << "<" << i << ">-(" << hasEntirelyCollapsed() << ")----------------------------" << endl;
-            draw();
+            //cout << "--("<<(i * 100) / m_map.size() << "%)-<" << i << ">----" << "\n";
+            if (render) draw();
 
             // propagate info from collapsed tiles
             propagate();
 
             //collapse tile with lowest entropy
-            //m_map[findUncollapsed()].collapse();
             m_map[findLowestEntropy()].collapse();
         }
-        cout << "------------------------------------" << endl;
+        cout << "-----------------------------------------------------------------------" << endl;
         cout << "Final: " << endl;
         draw();
+        cout << "Seed: " << m_seed << endl;
     }
 
     void draw() {

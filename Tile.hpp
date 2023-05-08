@@ -3,19 +3,18 @@
 
 #include <iostream>
 #include <vector>
+#include <time.h>
 
 #include "t_tile.hpp"
-#include <time.h>
 
 #define COLLAPSED_TILE_SIZE 1
 
+using std::ostream;
 using std::vector;
 using std::cout;
-using std::endl;
+using std::endl;  
 
 class Tile {
-private:
-
 public:
     t_tile ref;
     vector<t_tile> m_tilePossibilities;
@@ -23,45 +22,30 @@ public:
     Tile():
         ref(t_tile::NONE)
     {
-        m_tilePossibilities = {
-            t_tile::ALL,
-            t_tile::DOWN_LEFT,
-            t_tile::DOWN_LEFT_RIGHT,
-            t_tile::DOWN_RIGHT,
-            t_tile::DOWN_UP,
-            t_tile::LEFT_RIGHT,
-            t_tile::LEFT_UP_DOWN,
-            t_tile::NONE,
-            t_tile::RIGHT_UP_DOWN,
-            t_tile::UP_LEFT,
-            t_tile::UP_LEFT_RIGHT,
-            t_tile::UP_RIGHT
-        };
+        for (int i = 0; i < t_tile::TILE_MAX_SIZE; i++) 
+            m_tilePossibilities.push_back(static_cast<t_tile>(i));
+        
         srand(time(NULL));
     }
 
-    Tile(vector<t_tile> tilePos):
-        ref(t_tile::NONE), m_tilePossibilities(tilePos)
-    { }
+    Tile(unsigned int seed):
+        ref(t_tile::NONE)
+    { 
+        for (int i = 0; i < t_tile::TILE_MAX_SIZE; i++) 
+            m_tilePossibilities.push_back(static_cast<t_tile>(i));
+            
+        srand(seed);
+    }
 
     int entropy() {
         return this->m_tilePossibilities.size();
     }
 
     void collapse() {
-        /*
-        cout << "From ";
-        for(t_tile i: m_tilePossibilities) 
-            std::cout << i << " ";
-        cout << "(" << m_tilePossibilities.size() << ") states to ";
-        */
-
         int num   = rand() % m_tilePossibilities.size();
         this->ref = m_tilePossibilities[num];
         m_tilePossibilities.clear();                        // set entropy = 0
         m_tilePossibilities.push_back(this->ref);           // entropy = 1 when collapsed
-
-        //cout << m_tilePossibilities[0] << "(" << m_tilePossibilities.size() << ")" << endl;
     }
 
     Tile& operator=(const Tile& tile) {
@@ -74,7 +58,7 @@ public:
 
 };
 
-std::ostream &operator<<(std::ostream &os, const Tile& tile) {    
+inline ostream &operator<<(std::ostream &os, const Tile& tile) {    
     os << "Possibilities: ";
     if (tile.m_tilePossibilities.size() == COLLAPSED_TILE_SIZE) 
         return os << to_string(tile.ref);

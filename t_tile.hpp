@@ -2,6 +2,23 @@
 #define T_TILE_HPP
 
 enum t_tile {
+    DOWN_RIGHT      ,
+    DOWN_UP         ,
+    DOWN_LEFT       ,
+    LEFT_RIGHT      ,
+    UP_RIGHT        ,
+    UP_LEFT         ,
+    LEFT_UP_DOWN    ,
+    RIGHT_UP_DOWN   ,
+    UP_LEFT_RIGHT   ,
+    DOWN_LEFT_RIGHT ,
+    ALL             ,
+    NONE            ,
+    TILE_MAX_SIZE
+};
+
+/*
+enum t_tile {
     DOWN_RIGHT      = 0,
     DOWN_UP         = 1,
     DOWN_LEFT       = 2,
@@ -15,6 +32,9 @@ enum t_tile {
     ALL             = 10,
     NONE            = 11
 };
+*/
+
+
 /*
 const std::string to_string(t_tile tile) {
     switch (tile) {
@@ -47,10 +67,11 @@ const std::string to_string(int n_tile) {
         case 8:  return "┻"; break;
         case 9:  return "┳"; break;
         case 10: return "╋"; break;
-        case 11: return "."; break;
+        case 11: return " "; break;
         default: return " "; break;
     }
 }
+
 
 
 #endif
